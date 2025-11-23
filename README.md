@@ -1,12 +1,12 @@
 # DMX512 Controller for Raspberry Pi
 
-Sample DMX512 Python code for controlling BeamZ LED Par lights using an AVT DMX512 USB controller on Raspberry Pi. This project demonstrates an 8Hz white strobe effect.
+Sample DMX512 Python code for controlling BeamZ LED Par 12 LEDs fixtures using an AVT DMX512 USB controller on Raspberry Pi. This project demonstrates an 8Hz white strobe effect.
 
 ## Hardware Requirements
 
 - **Raspberry Pi** (any model with USB port - tested on Pi 3/4)
 - **AVT DMX512 USB Controller** (Enttec DMX USB Pro compatible)
-- **BeamZ LED Par** (or compatible DMX-controlled LED Par light)
+- **BeamZ LED Par 12 LEDs** (12x 1W LEDs: 4 Red, 4 Green, 4 Blue)
 - **DMX Cable** (3-pin or 5-pin XLR)
 - **Power supply** for the LED Par
 
@@ -23,20 +23,21 @@ Sample DMX512 Python code for controlling BeamZ LED Par lights using an AVT DMX5
 
 ### 2. Set Up the BeamZ LED Par
 
-1. **Set the DMX address on the BeamZ LED Par:**
+1. **Set the DMX address on the BeamZ LED Par 12 LEDs:**
    - Use the control panel on the back of the fixture
    - Navigate to DMX address setting (usually in setup menu)
    - Set the address to **001** (or note the address you choose)
-   - The fixture should be in 7-channel mode (RGBW mode)
+   - Set the fixture to **6-channel mode** (RGB mode)
 
-2. **DMX Channel Layout (7-channel mode):**
+2. **DMX Channel Layout (6-channel mode):**
    - Channel 1: Master Dimmer (0-255)
    - Channel 2: Red (0-255)
    - Channel 3: Green (0-255)
    - Channel 4: Blue (0-255)
-   - Channel 5: White (0-255)
-   - Channel 6: Strobe (0-255)
-   - Channel 7: Mode/Programs (0-255)
+   - Channel 5: Strobe (0=off, 1-255=slow to fast)
+   - Channel 6: Mode/Programs (0-255)
+   
+   **Note:** For white light, all RGB channels (2, 3, 4) are set to 255.
 
 3. **Connect DMX cable:**
    - Connect DMX cable from AVT controller's DMX OUT to the BeamZ Par's DMX IN
@@ -154,7 +155,7 @@ The code implements software-based strobing at 8Hz (125ms period, 50% duty cycle
 ## Code Structure
 
 - **`DMXUSB` class**: Handles communication with the AVT DMX512 USB controller using the Enttec DMX USB Pro protocol
-- **`BeamZLEDPar` class**: Provides high-level control for BeamZ LED Par fixtures
+- **`BeamZLEDPar` class**: Provides high-level control for BeamZ LED Par 12 LEDs fixtures (6-channel mode)
 - **`strobe_8hz()` function**: Implements the 8Hz white strobe effect
 - **`main()` function**: Entry point that orchestrates the demo
 
@@ -173,8 +174,17 @@ cycle_time = 1.0 / 10.0  # 10Hz
 ```python
 # Red strobe
 par_light.set_dimmer(255)
-par_light.set_rgb(255, 0, 0)
-par_light.set_white(0)
+par_light.set_rgb(255, 0, 0)  # Full red
+dmx_controller.send_dmx()
+
+# Blue strobe
+par_light.set_dimmer(255)
+par_light.set_rgb(0, 0, 255)  # Full blue
+dmx_controller.send_dmx()
+
+# Purple strobe
+par_light.set_dimmer(255)
+par_light.set_rgb(255, 0, 255)  # Red + Blue
 dmx_controller.send_dmx()
 ```
 
@@ -182,7 +192,8 @@ dmx_controller.send_dmx()
 
 ```python
 par1 = BeamZLEDPar(dmx, start_channel=1)   # First fixture at address 1
-par2 = BeamZLEDPar(dmx, start_channel=8)   # Second fixture at address 8
+par2 = BeamZLEDPar(dmx, start_channel=7)   # Second fixture at address 7 (1+6 channels)
+```
 ```
 
 ## Technical Details

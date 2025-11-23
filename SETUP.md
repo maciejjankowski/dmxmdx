@@ -113,19 +113,20 @@ cycle_time = 1.0 / 10.0  # Change to 10Hz
 
 ## DMX Channel Reference
 
-BeamZ LED Par (7-channel mode):
+BeamZ LED Par 12 LEDs (6-channel mode):
 
-| Channel | Function | Range |
-|---------|----------|-------|
-| 1 | Master Dimmer | 0-255 |
-| 2 | Red | 0-255 |
-| 3 | Green | 0-255 |
-| 4 | Blue | 0-255 |
-| 5 | White | 0-255 |
-| 6 | Strobe | 0-255 |
-| 7 | Programs | 0-255 |
+| Channel | Function | Range | Description |
+|---------|----------|-------|-------------|
+| 1 | Master Dimmer | 0-255 | Overall brightness |
+| 2 | Red | 0-255 | Red LEDs (4x 1W) |
+| 3 | Green | 0-255 | Green LEDs (4x 1W) |
+| 4 | Blue | 0-255 | Blue LEDs (4x 1W) |
+| 5 | Strobe | 0-255 | 0=off, 1-255=slow to fast |
+| 6 | Programs | 0-255 | Built-in programs |
 
-**Note:** Channel layout may vary by model. Check your fixture's manual.
+**For White Light:** Set all RGB channels (2, 3, 4) to 255
+
+**Note:** The 12 LED version may also support 3, 4, 8, or 11-channel modes. Check your fixture's manual.
 
 ## Safety Notes
 

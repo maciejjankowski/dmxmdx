@@ -69,26 +69,25 @@ def test_set_channel():
 
 
 def test_beamz_led_par():
-    """Test BeamZ LED Par controller."""
-    print("\n--- Test 3: BeamZ LED Par Controller ---")
+    """Test BeamZ LED Par 12 LEDs controller."""
+    print("\n--- Test 3: BeamZ LED Par 12 LEDs Controller ---")
     dmx = dmx_strobe.DMXUSB(port='/dev/ttyUSB0')
     par = dmx_strobe.BeamZLEDPar(dmx, start_channel=1)
     
-    # Test white_full
+    # Test white_full (in 12 LED version, white = R+G+B at 255)
     par.white_full()
     assert dmx.dmx_data[0] == 255, "Dimmer should be 255"
-    assert dmx.dmx_data[4] == 255, "White should be 255"
-    assert dmx.dmx_data[1] == 0, "Red should be 0"
-    assert dmx.dmx_data[2] == 0, "Green should be 0"
-    assert dmx.dmx_data[3] == 0, "Blue should be 0"
+    assert dmx.dmx_data[1] == 255, "Red should be 255 (for white)"
+    assert dmx.dmx_data[2] == 255, "Green should be 255 (for white)"
+    assert dmx.dmx_data[3] == 255, "Blue should be 255 (for white)"
     
-    # Test blackout
+    # Test blackout (6 channels in 12 LED version)
     par.blackout()
-    for i in range(7):
+    for i in range(6):
         assert dmx.dmx_data[i] == 0, f"Channel {i+1} should be 0 after blackout"
     
     dmx.close()
-    print("✓ BeamZ LED Par controller test passed")
+    print("✓ BeamZ LED Par 12 LEDs controller test passed")
 
 
 def test_strobe_timing():
@@ -138,14 +137,15 @@ def test_multiple_fixtures():
     print("\n--- Test 6: Multiple Fixtures ---")
     dmx = dmx_strobe.DMXUSB(port='/dev/ttyUSB0')
     
+    # 6-channel mode: first fixture uses channels 1-6, second uses 7-12
     par1 = dmx_strobe.BeamZLEDPar(dmx, start_channel=1)
-    par2 = dmx_strobe.BeamZLEDPar(dmx, start_channel=8)
+    par2 = dmx_strobe.BeamZLEDPar(dmx, start_channel=7)
     
     par1.set_dimmer(255)
     par2.set_dimmer(128)
     
     assert dmx.dmx_data[0] == 255, "Fixture 1 dimmer should be 255"
-    assert dmx.dmx_data[7] == 128, "Fixture 2 dimmer should be 128"
+    assert dmx.dmx_data[6] == 128, "Fixture 2 dimmer should be 128"
     
     dmx.close()
     print("✓ Multiple fixtures test passed")

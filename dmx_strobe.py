@@ -90,21 +90,23 @@ class DMXUSB:
 
 class BeamZLEDPar:
     """
-    Controller for BeamZ LED Par light.
+    Controller for BeamZ LED Par 12 LEDs version.
     
-    Typical DMX channel layout for BeamZ LED Par (7-channel mode):
+    DMX channel layout for BeamZ LED Par 12 LEDs (6-channel mode):
     Channel 1: Dimmer (0-255)
     Channel 2: Red (0-255)
     Channel 3: Green (0-255)
     Channel 4: Blue (0-255)
-    Channel 5: White (0-255)
-    Channel 6: Strobe (0-255)
-    Channel 7: Mode/Programs
+    Channel 5: Strobe (0=off, 1-255=slow to fast)
+    Channel 6: Mode/Programs (0-255)
+    
+    Note: The 12 LED version has 12x 1W LEDs (4 Red, 4 Green, 4 Blue).
+    For white light, all RGB channels should be set to 255.
     """
     
     def __init__(self, dmx_controller, start_channel=1):
         """
-        Initialize BeamZ LED Par controller.
+        Initialize BeamZ LED Par 12 LEDs controller.
         
         Args:
             dmx_controller: DMXUSB instance
@@ -123,29 +125,24 @@ class BeamZLEDPar:
         self.dmx.set_channel(self.start_channel + 2, green)
         self.dmx.set_channel(self.start_channel + 3, blue)
     
-    def set_white(self, value):
-        """Set white LED value (0-255)."""
-        self.dmx.set_channel(self.start_channel + 4, value)
-    
     def set_strobe(self, value):
         """Set strobe speed (0=off, 1-255=slow to fast)."""
-        self.dmx.set_channel(self.start_channel + 5, value)
+        self.dmx.set_channel(self.start_channel + 4, value)
     
     def set_mode(self, value):
         """Set mode/program (0-255)."""
-        self.dmx.set_channel(self.start_channel + 6, value)
+        self.dmx.set_channel(self.start_channel + 5, value)
     
     def white_full(self):
-        """Turn on white at full brightness."""
+        """Turn on white at full brightness (all RGB at 255)."""
         self.set_dimmer(255)
-        self.set_rgb(0, 0, 0)
-        self.set_white(255)
+        self.set_rgb(255, 255, 255)  # White = R+G+B at full
         self.set_strobe(0)
         self.set_mode(0)
     
     def blackout(self):
         """Turn off all channels for this fixture."""
-        for i in range(7):
+        for i in range(6):
             self.dmx.set_channel(self.start_channel + i, 0)
 
 
@@ -193,22 +190,22 @@ def strobe_8hz(dmx_controller, par_light, duration=10):
 
 def main():
     """
-    Main program to demonstrate 8Hz white strobe on BeamZ LED Par.
+    Main program to demonstrate 8Hz white strobe on BeamZ LED Par 12 LEDs.
     """
     print("=" * 60)
-    print("DMX512 BeamZ LED Par - 8Hz White Strobe Demo")
+    print("DMX512 BeamZ LED Par 12 LEDs - 8Hz White Strobe Demo")
     print("=" * 60)
     print()
     
     # Configuration
     SERIAL_PORT = '/dev/ttyUSB0'  # Change if your device is on a different port
-    PAR_DMX_ADDRESS = 1            # DMX start address of your BeamZ LED Par
+    PAR_DMX_ADDRESS = 1            # DMX start address of your BeamZ LED Par 12 LEDs
     STROBE_DURATION = 10           # Strobe duration in seconds
     
     # Initialize DMX controller
     dmx = DMXUSB(port=SERIAL_PORT)
     
-    # Initialize BeamZ LED Par
+    # Initialize BeamZ LED Par 12 LEDs (6-channel mode)
     par = BeamZLEDPar(dmx, start_channel=PAR_DMX_ADDRESS)
     
     try:
