@@ -8,7 +8,6 @@ This script creates an 8Hz white strobe effect on a BeamZ LED Par light.
 
 import serial
 import time
-import struct
 import sys
 
 class DMXUSB:

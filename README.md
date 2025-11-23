@@ -194,7 +194,6 @@ dmx_controller.send_dmx()
 par1 = BeamZLEDPar(dmx, start_channel=1)   # First fixture at address 1
 par2 = BeamZLEDPar(dmx, start_channel=7)   # Second fixture at address 7 (1+6 channels)
 ```
-```
 
 ## Technical Details
 
